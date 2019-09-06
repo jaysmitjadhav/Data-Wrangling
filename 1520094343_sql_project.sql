@@ -45,9 +45,9 @@ Return the facid, facility name, member cost, and monthly maintenance of the
 facilities in question. */
 
 SELECT facid,
-	   name,
-	   membercost,
-	   monthlymaintenance
+       name,
+       membercost,
+       monthlymaintenance
   FROM Facilities
  WHERE membercost > 0
    AND membercost < (0.2 * monthlymaintenance)
@@ -67,9 +67,9 @@ more than $100? Return the name and monthly maintenance of the facilities
 in question. */
 
 SELECT name,
-	  monthlymaintenance,
-	  CASE WHEN monthlymaintenance < 100 THEN 'cheap' 
-		  ELSE 'expensive' END AS cost
+       monthlymaintenance,
+       CASE WHEN monthlymaintenance < 100 THEN 'cheap' 
+	    ELSE 'expensive' END AS cost
   FROM Facilities
 
 
@@ -77,7 +77,7 @@ SELECT name,
 who signed up. Do not use the LIMIT clause for your solution. */
 
 SELECT firstname,
-	   surname
+       surname
   FROM Members
  WHERE firstname != 'GUEST'
 
@@ -112,16 +112,15 @@ facility, the name of the member formatted as a single column, and the cost.
 Order by descending cost, and do not use any subqueries. */
 
 SELECT CONCAT( Members.firstname, ' ', Members.surname ) AS member,
-	  Facilities.name AS facility,
+       Facilities.name AS facility,
        CASE WHEN Members.memid =0
-		 THEN Bookings.slots * Facilities.guestcost
-		 ELSE Bookings.slots * Facilities.membercost
-	  END AS cost
+	    THEN Bookings.slots * Facilities.guestcost
+	    ELSE Bookings.slots * Facilities.membercost
+	    END AS cost
 FROM Members
 INNER JOIN Bookings ON Members.memid = Bookings.memid
 INNER JOIN Facilities ON Bookings.facid = Facilities.facid
-WHERE Bookings.starttime >= '2012-09-14'
-AND Bookings.starttime < '2012-09-15'
+WHERE Bookings.starttime >= '2012-09-14' AND Bookings.starttime < '2012-09-15'
 AND ((Members.memid =0 AND Bookings.slots * Facilities.guestcost >=30)
 OR (Members.memid !=0 AND Bookings.slots * Facilities.membercost >=30))
 ORDER BY cost DESC 
@@ -133,17 +132,16 @@ SELECT *
 FROM (
     
       SELECT CONCAT( Members.firstname, ' ', Members.surname ) AS member,
-	         Facilities.name AS facility,
+	     Facilities.name AS facility,
              CASE WHEN Members.memid =0
-		          THEN Bookings.slots * Facilities.guestcost
-		          ELSE Bookings.slots * Facilities.membercost
+		  THEN Bookings.slots * Facilities.guestcost
+		  ELSE Bookings.slots * Facilities.membercost
 	          END AS cost
          FROM Members
         INNER JOIN Bookings ON Members.memid = Bookings.memid
-		INNER JOIN Facilities ON Bookings.facid = Facilities.facid
-		WHERE Bookings.starttime >= '2012-09-14'
-		  AND Bookings.starttime < '2012-09-15'
-    ) sub
+	INNER JOIN Facilities ON Bookings.facid = Facilities.facid
+	WHERE Bookings.starttime >= '2012-09-14' AND Bookings.starttime < '2012-09-15'
+      ) sub
 WHERE sub.cost > 30
 ORDER BY cost DESC 
 
@@ -155,18 +153,18 @@ that there's a different cost for guests and members! */
 SELECT * 
 FROM (
         SELECT sub1.facility,
-    		   SUM(sub1.cost) AS total_revenue
+    	       SUM(sub1.cost) AS total_revenue
 FROM (
 		SELECT Facilities.name AS facility,
-       		   CASE WHEN Members.memid =0
-		 			THEN Bookings.slots * Facilities.guestcost
-		 			ELSE Bookings.slots * Facilities.membercost
-	  				END AS cost
+       		       CASE WHEN Members.memid =0
+		 	    THEN Bookings.slots * Facilities.guestcost
+		 	    ELSE Bookings.slots * Facilities.membercost
+	  		    END AS cost
 		  FROM Members
-		INNER JOIN Bookings ON Members.memid = Bookings.memid
-		INNER JOIN Facilities ON Bookings.facid = Facilities.facid
+		 INNER JOIN Bookings ON Members.memid = Bookings.memid
+		 INNER JOIN Facilities ON Bookings.facid = Facilities.facid
     )sub1
 GROUP BY sub1.facility
-	)sub2
+    )sub2
 WHERE sub2.total_revenue <1000
 ORDER BY sub2.total_revenue
